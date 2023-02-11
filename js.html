@@ -1,49 +1,74 @@
 <script>
-    function crearTablaContactos()
-    {
-        google.script.run.withSuccessHandler( 
-            function(obj)
-            {
-                let tabla = document.getElementById('tablaContactos');
-                if(tabla) tabla.remove();
+    function crearTablaContactos() {
 
-                tabla = document.createElement('table');
-                tabla.id = 'tablaContactos';
+        let tabla = document.getElementById('tablaContactos');
+        if (tabla) tabla.remove();
 
-                let tablaHeader = document.createElement('thead');
-                let tablaBody = document.createElement('tbody');
+        google.script.run
+            .withSuccessHandler(crearTablaContactosCorrectamente)
+            .withFailureHandler(crearTablaContactosError)
+            .obtenerContactos();
+    }
 
-                let primeraFila = document.createElement('tr');
-                for(let i=0; i < obj[0].length; i++)
-                {
-                    let celda = document.createElement('td');
-                    celda.textContent = obj[0][i];
-                    primeraFila.appendChild(celda);
-                }
-                tablaHeader.appendChild(primeraFila);
-                tabla.appendChild(tablaHeader);
+    function crearTablaContactosCorrectamente(obj) {
 
-                for(let i = 1; i < obj.length; i++)
-                {
-                    let fila = document.createElement('tr');
-                    for(let j=0; j < obj[i].length; j++)
-                    {
-                        let celda = document.createElement('td');
-                        celda.textContent = obj[i][j];
-                        fila.appendChild(celda);
-                    }
-                    
-                    tablaBody.appendChild(fila);
-                    
-                        
-                }
-                tablaHeader.classList.add('table-dark');
-                tabla.appendChild(tablaBody);
-                tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success');
+        tabla = document.createElement('table');
+        tabla.id = 'tablaContactos';
 
-                document.getElementById('divContactos').appendChild(tabla);
+        let tablaHeader = document.createElement('thead');
+        let tablaBody = document.createElement('tbody');
+
+        let primeraFila = document.createElement('tr');
+        for (let i = 0; i < obj[0].length; i++) {
+            let celda = document.createElement('td');
+            celda.textContent = obj[0][i];
+            primeraFila.appendChild(celda);
+        }
+        tablaHeader.appendChild(primeraFila);
+        tabla.appendChild(tablaHeader);
+
+        for (let i = 1; i < obj.length; i++) {
+            let fila = document.createElement('tr');
+            for (let j = 0; j < obj[i].length; j++) {
+                let celda = document.createElement('td');
+                celda.textContent = obj[i][j];
+                fila.appendChild(celda);
             }
-            
-        ).obtenerContactos();
+
+            tablaBody.appendChild(fila);
+
+
+        }
+        tablaHeader.classList.add('table-dark');
+        tabla.appendChild(tablaBody);
+        tabla.classList.add('table', 'table-striped', 'border', 'border-3', 'table-success');
+
+        document.getElementById('divContactos').appendChild(tabla);
+
+        // Notificación de datos correctos
+        crearNotificacion(1, 'Contactos obtenidos correctamente', 'Todo en orden');
+    }
+
+    function crearTablaContactosError() {
+        // Notificación de error
+    }
+
+    function crearNotificacion(tipo, mensaje, titulo) {
+        // Obtener datos
+        let mensajeNotificacion = document.getElementById('mensajeNotificacion');
+        let tituloNotificacion = document.getElementById('tituloNotificacion');
+        let elementoNotificacion = document.getElementById('notificacion');
+        let iconoNotificacion = document.getElementById('iconoNotificacion');
+        let notificacion = bootstrap.Toast.getOrCreateInstance(elementoNotificacion);
+
+        // Editar la notificacion
+        iconoNotificacion.className = '';
+        iconoNotificacion.classList.add('bi', 'bi-check2-square');
+        mensajeNotificacion.textContent = mensaje;
+        tituloNotificacion.textContent = titulo;
+        elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--color-verde-oscuro');
+
+        // Mostrar notificación
+        notificacion.show();
     }
 </script>
