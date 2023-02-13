@@ -1,8 +1,10 @@
 <script>
     function crearTablaContactos() {
 
-        let tabla = document.getElementById('tablaContactos');
-        if (tabla) tabla.remove();
+        eliminarTabla();
+
+        // Crear Loader
+        crearLoaderAnillo('divContactos');
 
         google.script.run
             .withSuccessHandler(crearTablaContactosCorrectamente)
@@ -47,12 +49,14 @@
 
         // Notificación de datos correctos
         crearNotificacionOk('Contactos obtenidos correctamente', 'Todo en orden');
+        eliminarLoader();
     }
 
     function crearTablaContactosError() {
         // Notificación de error
         
         crearNotificacionError('No se han podido obtener los contactos', 'ERROR');
+        eliminarLoader();
     }
 
     function crearNotificacion(mensaje, titulo)
@@ -138,5 +142,38 @@
         
         // Mostrar notificación
         notificacion.show();
+    }
+
+    function crearLoader(elementoPadre)
+    {
+        eliminarLoader();
+        let loader = document.createElement('div');
+        loader.id = 'loader';
+        loader.appendChild(document.createElement('div'));
+        loader.appendChild(document.createElement('div'));
+        loader.appendChild(document.createElement('div'));
+        loader.appendChild(document.createElement('div'));        
+        return document.getElementById(elementoPadre).appendChild(loader);
+    }
+    function crearLoaderAnillo(elementoPadre)
+    {
+        let loader = crearLoader(elementoPadre);
+        loader.classList.add('lds-ring');
+    }
+    function crearLoaderPuntos(elementoPadre)
+    {
+        let loader = crearLoader(elementoPadre);
+        loader.classList.add('lds-ellipsis');
+    }
+    function eliminarLoader()
+    {
+        let loader = document.getElementById('loader');
+        if (loader) loader.remove();
+    }
+
+    function eliminarTabla()
+    {
+        let tabla = document.getElementById('tablaContactos');
+        if (tabla) tabla.remove();
     }
 </script>
