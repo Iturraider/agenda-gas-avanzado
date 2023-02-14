@@ -1,4 +1,46 @@
 <script>
+    function insertarContacto() {
+
+        //Obtener datos
+        let nombre = document.getElementById('nombre').value;
+        let correo = document.getElementById('correo').value;
+
+        //eliminar tabla
+        eliminarTabla();
+
+        // Crear Loader
+        crearLoaderAnillo('divContactos');
+
+
+
+        google.script.run
+            .withSuccessHandler(contactoInsertadoCorrectamente)
+            .withFailureHandler(contactoInsertadoError)
+            .insertarContactos(nombre, correo);
+    }
+    function contactoInsertadoCorrectamente()
+    {
+        //Eliminamos los datos de los inputs
+        document.getElementById('nombre').value = '';
+        document.getElementById('correo').value = '';
+
+        //mostrar notificacion
+        crearNotificacionOk('Contacto insertado correctamente', 'CONTACTO OK');
+
+        //Eliminar loader
+        eliminarLoader();
+
+        //crear tabla
+        crearTablaContactos();
+    }
+    function contactoInsertadoError()
+    {
+        crearNotificacionError('No se ha podido insertar el contacto', 'ERROR');
+
+        //Eliminar loader
+        eliminarLoader();
+        crearTablaContactos();
+    }
     function crearTablaContactos() {
 
         eliminarTabla();
@@ -54,55 +96,47 @@
 
     function crearTablaContactosError() {
         // Notificación de error
-        
+
         crearNotificacionError('No se han podido obtener los contactos', 'ERROR');
         eliminarLoader();
     }
 
-    function crearNotificacion(mensaje, titulo)
-    {
+    function crearNotificacion(mensaje, titulo) {
         document.getElementById('mensajeNotificacion').textContent = mensaje;
         document.getElementById('tituloNotificacion').textContent = titulo;
         let elementoNotificacion = document.getElementById('notificacion');
         bootstrap.Toast.getOrCreateInstance(elementoNotificacion).show();
     }
 
-    function crearNotificacionOk(mensaje, titulo)
-    {
+    function crearNotificacionOk(mensaje, titulo) {
         crearNotificacion(mensaje, titulo);
         crearIconoNotificacionOk();
         crearColorNotificacion('--color-verde-oscuro');
 
     }
-    function crearNotificacionError(mensaje, titulo)
-    {
+    function crearNotificacionError(mensaje, titulo) {
         crearNotificacion(mensaje, titulo);
         crearIconoNotificacionError();
         crearColorNotificacion('--color-rojo-oscuro');
     }
-    function crearNotificacionAdvertencia(mensaje, titulo)
-    {
+    function crearNotificacionAdvertencia(mensaje, titulo) {
         crearNotificacion(mensaje, titulo);
         crearIconoNotificacionAdvertencia();
         crearColorNotificacion('--color-amarillo-oscuro');
     }
-    function crearIconoNotificacionOk()
-    {
+    function crearIconoNotificacionOk() {
         document.getElementById('iconoNotificacion').className = '';
         document.getElementById('iconoNotificacion').classList.add('bi', 'bi-check2-square');
     }
-    function crearIconoNotificacionError()
-    {
+    function crearIconoNotificacionError() {
         document.getElementById('iconoNotificacion').className = '';
         document.getElementById('iconoNotificacion').classList.add('bi', 'bi-bug');
     }
-    function crearIconoNotificacionAdvertencia()
-    {
+    function crearIconoNotificacionAdvertencia() {
         document.getElementById('iconoNotificacion').className = '';
         document.getElementById('iconoNotificacion').classList.add('bi', 'bi-exclamation-square');
     }
-    function crearColorNotificacion(color)
-    {
+    function crearColorNotificacion(color) {
         let elementoNotificacion = document.getElementById('notificacion');
         elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(color);
     }
@@ -139,40 +173,35 @@
                 elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--color-amarillo-oscuro');
                 break;
         }
-        
+
         // Mostrar notificación
         notificacion.show();
     }
 
-    function crearLoader(elementoPadre)
-    {
+    function crearLoader(elementoPadre) {
         eliminarLoader();
         let loader = document.createElement('div');
         loader.id = 'loader';
         loader.appendChild(document.createElement('div'));
         loader.appendChild(document.createElement('div'));
         loader.appendChild(document.createElement('div'));
-        loader.appendChild(document.createElement('div'));        
+        loader.appendChild(document.createElement('div'));
         return document.getElementById(elementoPadre).appendChild(loader);
     }
-    function crearLoaderAnillo(elementoPadre)
-    {
+    function crearLoaderAnillo(elementoPadre) {
         let loader = crearLoader(elementoPadre);
         loader.classList.add('lds-ring');
     }
-    function crearLoaderPuntos(elementoPadre)
-    {
+    function crearLoaderPuntos(elementoPadre) {
         let loader = crearLoader(elementoPadre);
         loader.classList.add('lds-ellipsis');
     }
-    function eliminarLoader()
-    {
+    function eliminarLoader() {
         let loader = document.getElementById('loader');
         if (loader) loader.remove();
     }
 
-    function eliminarTabla()
-    {
+    function eliminarTabla() {
         let tabla = document.getElementById('tablaContactos');
         if (tabla) tabla.remove();
     }
